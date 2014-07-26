@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block body %}
+  <h2>User Page</h2>
+  <table border="1">
+	<thead>
+	<tr>
+		<td>id</td>
+		<td>password</td>
+		<td>admin</td>
+	</tr>
+	</thead>
+	<tbody>
+	
+		{% for d in data %}
+			<tr>
+			<td>{{ d['email'] }}</td>
+			<td>{{ d['password'] }}</td>
+			<td>{{ d['admin'] }}</td>
+			</tr>	
+
+		{% endfor %}
+
+	</tbody>	
+  </table>
+ {% endblock %}

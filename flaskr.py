@@ -78,20 +78,39 @@ def login(): # 같으면 로그인
         for user in users:                       
             if user['email']==request.form['username']:
                 if user['password']==request.form['password']:
-                    print "success"
-                    return redirect(url_for('show_entries'))
+                    if user['admin']==True:
+                        session['admin']=True
+
+                        session['logged_in']=True
+                        session['email']= request.form['username']
+                        
+                        print "success"
+                        return redirect(url_for('show_entries'))
+                    else:
+                        session['logged_in']=True
+                        session['email']= request.form['username']
+                        
+                        print "success"
+                        return redirect(url_for('show_entries'))    
                     
         else:
             
             message = 'try it again'
             return render_template('login.html',message=message)
     else:
+
         return render_template('login.html',message=message)
 
 
 
 @app.route('/signup', methods=['GET','POST'])
 def signup():
+    admin=""
+    if 'admin' in request.form:
+        admin=True
+    else:
+        admin=False
+
     message = None
     if request.method == 'POST':
         if request.form['email'] == "":
@@ -108,27 +127,30 @@ def signup():
                     message = 'password is right'
                     if request.form['password']==request.form['password_check']:
                         message= 'right~'
-                        f = open('user.txt','r')
-                        data = f.read()
-                        f.close()
-                        users = json.loads(data)
-
-                        info={
-                           "email" : request.form['email'],
-                           "password" : request.form['password']
-                        }
-                        for user in users:
+                        if  os.path.isfile('user.txt'):
+                            f = open('user.txt','r')
+                            data = f.read()
+                            if data == "":
+                                users = []
+                            else:
+                                users = json.loads(data)
+                            f.close()
+                           
                             
-                            if user['email'] ==request.form['email']:
-                                message = 'error'
-                                return render_template('signup.html', message=message)
-                        users.append(info)
-
-                        
-
-                        f=open('user.txt','w')     
-                        f.write(json.dumps(users))#loads
-                        f.close() 
+                            info={
+                               "email" : request.form['email'],
+                               "password" : request.form['password'],
+                               "admin": admin
+                               
+                            }
+                            for user in users: 
+                                if user['email'] ==request.form['email']:
+                                    message = 'error'
+                                    return render_template('signup.html', message=message)
+                            users.append(info)
+                            f=open('user.txt','w')     
+                            f.write(json.dumps(users))#loads
+                            f.close() 
 
                        
 
@@ -155,6 +177,18 @@ def logout():
     flash('You were logged out')
     return redirect(url_for('show_entries'))
 
+@app.route('/userpage')
+def userpage():
+    f = open('user.txt','r')
+    data = f.read()
+    f.close()
+    return render_template('userpage.html',data = json.loads(data))
+@app.route('/email_check',methods=['POST'])
+def email_check():
+    email = request.form['email']
+    result ={}
+    result['message']="ok"
+    return json.dumps(result)#문자열화 시키는 중 response에 들어감         
 # 프로젝트 네임이름이 여러개일경우에 어떤걸 메인으로 하는 것 
 # flask 
 #

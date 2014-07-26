@@ -1,1 +1,1 @@
-[{"password": " Qwer1234!@#", "email": "bailey1234@naver.om"}, {"password": "Qwer1234!@#", "email": "gpfl7846@gmail.com"}]
+[{"admin": false, "password": "asdfF1234$", "email": "poiiu@gmail.com"}, {"admin": false, "password": "asdfF1234$", "email": "poiiuuu@gmail.com"}, {"admin": true, "password": "Qqwer1234!@!", "email": "gpfl7846@gmail.com"}]
